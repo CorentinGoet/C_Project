@@ -4,7 +4,6 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h>
 
-void ouvrir(FILE **f, char[] nom);
+void ouvrir(FILE **f, char* nom);
 void fermer(FILE *f);
