@@ -3,52 +3,50 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
 
-struct date{
-    int jour;
-    int mois;
-    int annee;
-};
+#include "../headers/compte.h"
+#include "../headers/date.h"
+#include "../headers/files_utils.h"
+#include "../headers/transactions.h"
 
-void date(struct date *d){
-    time_t t = time(NULL);
-    struct tm *tmp_time;
-    tmp_time = localtime(&t);
-    d->jour = tmp_time->tm_mday;
-    d->mois = tmp_time->tm_mon + 1;
-    d->annee = tmp_time->tm_year + 1900;
-}
 
-struct compte{
-    char *nom;   // Nom du propriétaire du compte
-    int num_compte;  // Numéro du compte
-};
-
-void ouvrir(FILE **f, char* nom){
-    *f = fopen(nom, "r+");
-}
-
-void fermer(FILE *f){
-    fclose(f);
-}
 
 int main(int argc, char const *argv[])
 {
-    struct date d;
+    // Test date
+    Date d;
     date(&d);
-    printf("date : %i / %i / %i \n", d.jour, d.mois, d.annee);
-    
-    struct compte c;
-    c.nom = "Corentin";
-    c.num_compte = 1;
-    printf("Le compte n°%i appartient à %s\n", c.num_compte, c.nom);
+    printf("Test date: %i / %i / %i \n", d.jour, d.mois, d.annee);
 
+    // Test compte
+    Compte c = {
+        .nom = "Corentin",
+        .num_compte = 1
+    };
+    printf("Test compte: \n Le compte n°%d appartient a %s.\n", c.num_compte, c.nom);
+
+    // Test transaction (inclut le test pour files_utils)
+    printf("Test transaction: \n");
+    Transaction t = {
+        .date= d,
+        .montant = 1500,
+        .label="Test_Label",
+        .nom="Corentin"
+    };
+    printf("La transaction a eu lieu le %i / %i / %i. \n", t.date.jour, t.date.mois, t.date.annee);
+    printf("%s a recu %f euros.\n", t.nom, t.montant);
+    printf("label : %s\n", t.label);
+
+    // Test creation_transaction
+    Transaction t2 = creation_transaction(d, 1500, "Test transaction", "Corentin");
+    printf("La transaction a eu lieu le %i / %i / %i. \n", t2.date.jour, t2.date.mois, t2.date.annee);
+    printf("%s a recu %f euros.\n", t2.nom, t2.montant);
+    printf("label : %s\n", t2.label);
+
+    // Test ajout_transaction + ouvrir + fermer
     FILE *f;
-    ouvrir(&f, "testfile.txt");
-    char test[4];
-    fgets(test, 4, f);
-    printf("%s\n", test);
-    fermer(f);
-    return 0;
+    ajout_transaction(f, t2);
+
 }
 
