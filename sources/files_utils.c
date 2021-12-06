@@ -15,7 +15,7 @@ void ouvrir(FILE **f, char nom[]){
     *f = fopen(nom, "r+");   // On ouvre le fichier en lecture écriture avec ajout (r+) et pas remplacement (w+)
     
     if(*f != NULL){
-        printf("ouvrir termine\n");
+        // print("ouverture réussie \n");
     }else{
         printf("Erreur d'ouverture du fichier : %s\n", nom);
     }

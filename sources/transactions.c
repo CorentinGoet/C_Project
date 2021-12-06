@@ -4,6 +4,7 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "../headers/date.h"
 #include "../headers/transactions.h"
@@ -31,16 +32,6 @@ Transaction creation_transaction(Date date, float montant, char* label, char* no
 }
 
 int ajout_transaction(FILE *f, Transaction transaction){
-    size_t code_retour;
-    printf("Test ouvrir\n");
-    char filename[] = "Files/liste_transactions";
-    ouvrir(&f, filename);
-    if(f == NULL){
-        printf("Erreur ouverture du fichier\n");
-    }else{
-        printf("ouverture du fichier ok\n");
-    }
-    printf("Test fwrite\n");
     
     // Ecriture du fichier
     fprintf(f, "%i %i %i ", transaction.date.jour, transaction.date.mois, transaction.date.annee); //date
@@ -49,31 +40,19 @@ int ajout_transaction(FILE *f, Transaction transaction){
     fprintf(f, "%s ", transaction.label);    // label
     fprintf(f, "%li ", strlen(transaction.nom)); // taille du nom
     fprintf(f, "%s \n", transaction.nom);    // nom
-
-
-    printf("test fermer\n");
-    fermer(f);
-    return code_retour;
 }
 
 
 /*
 * Cette fonction lit une transaction depuis le fichier fourni.
 */
-Transaction read_transaction(FILE *f){
+int read_transaction(FILE *f, Transaction *t){
     int jour, mois, annee, taille;
     float montant;
-    char label[31];
-    char nom[50];
+    char *label = malloc(31 * sizeof(char));
+    char *nom = malloc(50 * sizeof(char));
 
     fscanf(f, "%i %i %i ", &jour, &mois, &annee); // lecture de la date
-    
-    // Construction de la structure date
-    Date d = {
-        .jour = jour,
-        .mois = mois, 
-        .annee = annee
-    };
 
     fscanf(f, "%f ", &montant); // récupérer montant
     fscanf(f, "%i ", &taille);  // récupérer la taille du label
@@ -83,12 +62,12 @@ Transaction read_transaction(FILE *f){
 
     // Création de la transaction
 
-    Transaction t = {
-        .date = d,
-        .montant = montant,
-        .label = label,
-        .nom = nom
-    };
+    t->date.jour = jour;
+    t->date.mois = mois;
+    t->date.annee = annee;
+    t->montant = montant;
+    t->label = label;
+    t->nom = nom;
 
-    return t;
+    return 0;
 }
