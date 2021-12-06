@@ -31,11 +31,14 @@ Entete creation_entete(Date date, float solde){
 }
 
 FILE* creation_fichier(Entete entete, char* nom){
-    FILE *f = fopen(nom, "w+");   // On place le fichier dans le dossier files, on l'ouvre avec w+ pour le créer
+    char file_path[35] = "Files/comptes/";
+    strcat(file_path, nom);
+    FILE *f = fopen(nom, "w+");   // On place le fichier dans le dossier files/comptes, on l'ouvre avec w+ pour le créer
     fwrite(&entete, 1, sizeof(entete), f);
     return f;
 }
 
+/*
 void mise_a_jour_solde(FILE *f, Date d){
 
     // Récupération des données depuis le fichier des transactions
@@ -47,3 +50,4 @@ void mise_a_jour_solde(FILE *f, Date d){
 
     
 }
+*/

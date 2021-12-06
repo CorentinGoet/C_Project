@@ -1,4 +1,4 @@
-default: main date compte files transaction entete link
+default: main date compte files transaction entete menu link
 	
 main: sources/main.c
 	gcc -Wall -c sources/main.c -o binaries/main.o
@@ -18,5 +18,8 @@ transaction: sources/transactions.c
 entete: sources/entete.c
 	gcc -Wall -c sources/entete.c -o binaries/entete.o
 
+menu: sources/menu.c
+	gcc -Wall -c  sources/menu.c -o binaries/menu.o
+
 link: binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/entete.o
-	gcc -o main binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/transactions.o binaries/entete.o
+	gcc -o main binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/transactions.o binaries/entete.o binaries/menu.o

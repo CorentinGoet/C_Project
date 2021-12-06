@@ -10,6 +10,7 @@
 #include "../headers/files_utils.h"
 #include "../headers/transactions.h"
 #include "../headers/entete.h"
+#include "../headers/menu.h"
 
 
 
@@ -58,7 +59,7 @@ int main(int argc, char const *argv[])
     // Test de lecture de transaction
     ouvrir(&f, "Files/liste_transactions");
     read_transaction(f);
-    
+
 
     // Test entete
     printf("Test entete \n");
@@ -67,12 +68,25 @@ int main(int argc, char const *argv[])
         .solde = 100
     };
 
-    printf("test creation_fichier\n");
+    //printf("test creation_fichier\n");
     
-    FILE *f1 = creation_fichier(e, "test_entete");
+    //FILE *f1 = creation_fichier(e, "test_entete");
     
-    printf("test maj solde\n");
-    mise_a_jour_solde(f1, d);
+    
+    // tests menu
+
+    // test check_num_compte
+    printf("Test check_num_compte :\n");
+    if (check_num_compte(2) == 1){
+        printf("Compte disponible. \n");
+    }else{
+        printf("Numéro déjà pris. \n");
+    }
+
+
+    // test creer utilisateur
+    creer_utilisateur("Corentin");
+
 
 
 }
