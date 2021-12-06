@@ -14,4 +14,6 @@ typedef struct Date{
 
 void date(Date *d);
 
+int date_comp(Date d1, Date d2);
+
 #endif

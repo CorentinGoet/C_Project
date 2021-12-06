@@ -22,31 +22,28 @@ int creer_utilisateur(char *nom){
     // Création d'un numéro de compte aléatoire
     int num_compte;
     do{
-        printf("creer num aléatoire\n");
         srand(time(0));
         num_compte = rand();
-        printf("num aleatoire ok \n");
     } while (check_num_compte(num_compte) == 0);
-    printf("num aleatoire ok \n");
 
     // Création d'un en-tête pour le compte
-    printf("creation date\n");
     Date d;
     date(&d);
 
-    printf("creation date ok \n ");
+    Entete entete = creation_entete(d, 0);
 
-    printf("Création Entete \n");
-    Entete entete = {
-        .date = d,
-        .solde = 0
-    };
-
-    printf("Creation fichier\n");
 
     // Création du fichier correspondant au compte
-    creation_fichier(entete, nom);
-    printf("Creation fichier ok\n");
+    char str_num_compte[15];
+    sprintf(str_num_compte, "%i ", num_compte); // convertir le num de compte en chaine de caractères
+    FILE *f = creation_fichier(entete, str_num_compte);
+    fermer(f);
+
+    // ajout au registre de la banque
+    ouvrir(&f, "Files/registre");
+    fseek(f, 0, SEEK_END);
+    fprintf(f, "%i %li %s \n", num_compte, strlen(nom), nom); // Format du registre: num_compte taille_nom nom
+    fermer(f);
 }
 
 // Renvoie le numéro de compte associé à ce nom.

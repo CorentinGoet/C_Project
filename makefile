@@ -1,4 +1,4 @@
-default: main date compte files transaction entete menu link
+default: main date compte files transaction entete menu link test
 	
 main: sources/main.c
 	gcc -Wall -c sources/main.c -o binaries/main.o
@@ -23,3 +23,7 @@ menu: sources/menu.c
 
 link: binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/entete.o
 	gcc -o main binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/transactions.o binaries/entete.o binaries/menu.o
+
+test: sources/tests.c binaries/date.o binaries/compte.o binaries/files.o binaries/entete.o
+	gcc -Wall -c sources/tests.c -o binaries/test.o
+	gcc -o test binaries/test.o binaries/date.o binaries/compte.o binaries/files.o binaries/transactions.o binaries/entete.o binaries/menu.o

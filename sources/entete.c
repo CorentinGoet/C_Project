@@ -33,8 +33,8 @@ Entete creation_entete(Date date, float solde){
 FILE* creation_fichier(Entete entete, char* nom){
     char file_path[35] = "Files/comptes/";
     strcat(file_path, nom);
-    FILE *f = fopen(nom, "w+");   // On place le fichier dans le dossier files/comptes, on l'ouvre avec w+ pour le créer
-    fwrite(&entete, 1, sizeof(entete), f);
+    FILE *f = fopen(file_path, "w+");   // On place le fichier dans le dossier files/comptes, on l'ouvre avec w+ pour le créer
+    fprintf(f, "%i %i %i %f \n", entete.date.jour, entete.date.mois, entete.date.annee, entete.solde);
     return f;
 }
 
