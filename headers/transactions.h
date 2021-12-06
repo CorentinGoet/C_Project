@@ -20,4 +20,5 @@ Transaction creation_transaction(Date date, float montant, char label[30], char 
 
 int ajout_transaction(FILE *f, Transaction transaction);
 
+Transaction read_transaction(FILE *f);
 #endif

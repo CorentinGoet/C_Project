@@ -1,4 +1,4 @@
-default: main date compte files transaction link
+default: main date compte files transaction entete link
 	
 main: sources/main.c
 	gcc -Wall -c sources/main.c -o binaries/main.o
@@ -15,5 +15,8 @@ files: sources/files_utils.c
 transaction: sources/transactions.c
 	gcc -Wall -c sources/transactions.c -o binaries/transactions.o
 
-link: binaries/main.o binaries/date.o binaries/compte.o binaries/files.o
-	gcc -o main binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/transactions.o
+entete: sources/entete.c
+	gcc -Wall -c sources/entete.c -o binaries/entete.o
+
+link: binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/entete.o
+	gcc -o main binaries/main.o binaries/date.o binaries/compte.o binaries/files.o binaries/transactions.o binaries/entete.o

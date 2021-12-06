@@ -9,6 +9,7 @@
 #include "../headers/date.h"
 #include "../headers/files_utils.h"
 #include "../headers/transactions.h"
+#include "../headers/entete.h"
 
 
 
@@ -46,7 +47,33 @@ int main(int argc, char const *argv[])
 
     // Test ajout_transaction + ouvrir + fermer
     FILE *f;
+    printf("test strcat\n");
+    char test_str1[] = "partie 1";
+    char test_str2[] = "partie 2";
+    char* test_str = strcat(test_str1, test_str2);
+    printf("%s\n", test_str);
+
     ajout_transaction(f, t2);
+
+    // Test de lecture de transaction
+    ouvrir(&f, "Files/liste_transactions");
+    read_transaction(f);
+    
+
+    // Test entete
+    printf("Test entete \n");
+    Entete e = {
+        .date = d,
+        .solde = 100
+    };
+
+    printf("test creation_fichier\n");
+    
+    FILE *f1 = creation_fichier(e, "test_entete");
+    
+    printf("test maj solde\n");
+    mise_a_jour_solde(f1, d);
+
 
 }
 
