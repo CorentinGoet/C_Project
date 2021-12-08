@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "../headers/date.h"
 #include "../headers/compte.h"
@@ -21,11 +22,12 @@ int creer_utilisateur(char *nom){
 
     // Création d'un numéro de compte aléatoire
     int num_compte;
+    
     do{
         srand(time(0));
         num_compte = rand();
     } while (check_num_compte(num_compte) == 0);
-
+    
     // Création d'un en-tête pour le compte
     Date d;
     date(&d);
@@ -35,8 +37,10 @@ int creer_utilisateur(char *nom){
 
     // Création du fichier correspondant au compte
     char str_num_compte[15];
+    char path[50] = "Files/comptes/";
     sprintf(str_num_compte, "%i ", num_compte); // convertir le num de compte en chaine de caractères
-    FILE *f = creation_fichier(entete, str_num_compte);
+    strcat(path, str_num_compte);
+    FILE *f = creation_fichier(entete, path);
     fermer(f);
 
     // ajout au registre de la banque
@@ -44,10 +48,26 @@ int creer_utilisateur(char *nom){
     fseek(f, 0, SEEK_END);
     fprintf(f, "%i %li %s \n", num_compte, strlen(nom), nom); // Format du registre: num_compte taille_nom nom
     fermer(f);
+
+    return 0;
 }
 
 // Renvoie le numéro de compte associé à ce nom.
-int compte_de(char *nom);
+int compte_de(char *nom){
+    FILE *f;
+    ouvrir(&f, "Files/registre");
+    int taille, num_compte, res;
+    char nom_compte[50];
+    do{
+        res = fscanf(f, "%i %i ", &num_compte, &taille); // Récupérer le num de compte et le nb de char du nom
+        fgets(nom_compte, taille + 2, f);   // Récupérer le nom
+        nom_compte[taille+0] = '\0'; // On retire le \n et l'espace à la fin du nom
+        if (strcmp(nom, nom_compte) == 0){
+            return num_compte;
+        }
+    }while(res > 0);
+    return -1; // pas de compte trouvé
+}
 
 // Met à jour le compte associé à ce nom pour la date correspondante.
 int mise_a_jour_solde(char* nom, Date d);
@@ -65,14 +85,19 @@ int imprimer_releve(char *nom, int mois);
 int check_num_compte(int num_compte){
     char filename [35]= "Files/comptes/";
     char str_num_compte[15];
-    sprintf(str_num_compte, "%i ", num_compte); // convertir le num de compte en chaine de caractères
+    sprintf(str_num_compte, "%i", num_compte); // convertir le num de compte en chaine de caractères
     strcat(filename, str_num_compte);   // concaténer le path
+
+    FILE *file;
+    if((file = fopen(filename,"r"))!=NULL)
+        {
+            
+            fclose(file);
+            return 0;
+        }
+    else
+        {
+            return 1;
+        }
     
-    if(access(filename, F_OK) == 0){
-        // un fichier contenant ce numéro a été trouvé, ce numéro n'est pas disponible
-        return 0;
-    } else {
-        // pas de fichier avec ce num, il est disponible
-        return 1;
-    }
 }

@@ -113,10 +113,7 @@ int testTransaction(int details){
     read_transaction(f2, &t3);
     fermer(f2);
 
-    printf("test date : %i %i %i \n", t3.date.jour, t3.date.mois, t3.date.annee);
-    printf("Test montant: %f \n", t3.montant);
-    printf("Test label : %s \n", t3.label);
-    printf("test nom : %s \n", t3.nom);
+    
 
     if (date_comp(t2.date, t3.date) != 0 || t2.montant != t3.montant || strcmp(t3.label, t2.label) != 0 || strcmp(t3.nom, t2.nom) != 0){
         printf("Probleme ajout_transaction ou read_transaction.\n");
@@ -145,12 +142,97 @@ int testFiles(int details){
     return 0;
 }
 
+/**
+ * @brief Fonction de tests du module entete
+ * 
+ * @param details affiche les détails
+ * @return int 
+ */
+int testEntete(int details){
+    Date d;
+    date(&d);
+
+    // Test création
+    Entete e1 = {
+        .date = d,
+        .solde = 150
+    };
+
+    if(details)printf("Création directe ok !\n");
+
+    // Test creation_entete
+    Entete e2 = creation_entete(d, 150);
+    if(details)printf("Fonction creation_entete ok !\n");
+
+    // Test validité
+    if(e1.date.jour != e2.date.jour || e1.date.mois != e2.date.mois ||
+        e1.date.annee != e2.date.annee || e1.solde != e2.solde)
+        {
+            printf("Problème creation_entete.\n");
+            return 1;
+        }
+    
+    if(details)printf("Cohérence entre les créations ok !\n");
+
+    // Test creation_fichier
+
+    FILE *f = creation_fichier(e1, "Tests/test_creation_fichier");
+    fprintf(f, "%s", "fichier de test !\n");
+    fclose(f);
+
+    if(details)printf("Fonction creation_fichier ok !\n");
+
+    
+    return 0;
+}
+
+/**
+ * @brief Fonction de test du module menu.
+ * 
+ * @param details affiche les détails
+ * @return int 
+ */
+int testMenu(int details){
+    // Test check_num
+    int res1, res2;
+    res1 = check_num_compte(1234); // Le fichier Files/comptes/1234 existe arbitrairement pour ce test
+    res2 = check_num_compte(1); // Le fichier Files/comptes/1 n'existe pas
+    
+    if((res1 != 0) || (res2 != 1)){
+        printf("Problème dans la fonction check_num_compte (vérifier la présence des fichiers de test !)\n");
+        
+    }
+
+    if(details)printf("Fonction check_num_compte ok !\n");
+    
+    // Test creer_utilisateur
+    // Cette fonction crée un compte etc... elle ne peut pas être redirigée vers le dossier test.
+    // Les fichiers créés par ce test doivent être supprimés !
+
+    creer_utilisateur("Test_utilisateur");
+    if(details)printf("Fonction creer_utilisateur ok!\n");
+    printf("SUPPRIMER LES FICHIERS CREES PAR LE TEST !\n");
+
+    //Test compte_de
+    int res;
+    res = compte_de("Corentin");
+    if(res == -1){
+        printf("Pas de compte trouvé pour le nom Corentin \n");
+        printf("Problème fonction compte_de\n");
+        return 1;
+    }
+    if (details) printf("Fonction compte_de ok !");
+
+    return 0;
+}
+
+
 int main(int argc, char const *argv[])
 {
     
     int details = 0;
     if(argc > 1){
-        details = argv[1];
+        details = atoi(argv[1]);
     }
 
     printf("=========================================\n");
@@ -189,6 +271,24 @@ int main(int argc, char const *argv[])
         printf("Module Transaction ok!\n");
     }else{
         printf("Problème module Transaction. \n");
+        return 1;
+    }
+
+    printf("-----------------------------------------\n");
+    printf("Tests du module Entete ... \n");
+    if (testEntete(details) == 0){
+        printf("Module Entete ok!\n");
+    }else{
+        printf("Problème module Entete. \n");
+        return 1;
+    }
+
+    printf("-----------------------------------------\n");
+    printf("Tests du module Menu ... \n");
+    if (testMenu(details) == 0){
+        printf("Module Menu ok!\n");
+    }else{
+        printf("Problème module Menu. \n");
         return 1;
     }
 
