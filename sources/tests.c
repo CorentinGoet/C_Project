@@ -172,31 +172,29 @@ int testEntete(int details){
     
     if(details)printf("Cohérence entre les créations ok !\n");
 
+
+
     // Test creation_fichier
 
     FILE *f = creation_fichier(e1, "Tests/test_creation_fichier");
     fprintf(f, "%s", "fichier de test !\n");
     fclose(f);
 
-    if(details)printf("Fonction creation_fichier ok !\n");
+    if(details)printf("Fonction creation_fichier + write_entete ok !\n");
 
     // Test read_entete
     FILE *f2;
     ouvrir(&f2, "Tests/test_creation_fichier");
-    Date d2;
-    float solde;
-    read_entete(f2, &d2, &solde);
+    read_entete(f2, &e2);
     fermer(f2);
 
-
-    if(e1.date.jour != d2.jour || e1.date.mois != d2.mois || e1.date.annee != d2.annee){
-        printf("Problème fonction read_entete sur la lecture de date.\n");
-        return 1;
-    }
-    if(e1.solde != solde){
-        printf("Problème fonction read_entete sur la lecture du solde.\n");
-        return 1;
-    }
+    if(e1.date.jour != e2.date.jour || e1.date.mois != e2.date.mois ||
+        e1.date.annee != e2.date.annee || e1.solde != e2.solde)
+        {
+            printf("Problème fonction read_entete.\n");
+            return 1;
+        }
+    
 
     if(details) printf("Fonction read_entete ok !\n");
     return 0;
@@ -249,6 +247,39 @@ int testMenu(int details){
         return 1;
     }
     if(details) printf("Fonction nom_compte ok !\n");
+
+    // tests mise_a_jour_solde
+    Date d_solde;
+    date(&d_solde);
+    d_solde.jour = d_solde.jour +1; // la transaction doit se passer après la date de l'entete
+    num_compte = compte_de("Test_utilisateur");
+    nom_compte(num_compte, nom_c);
+    FILE *f;
+    ouvrir(&f, nom_c);
+    Transaction t;
+    int montant = 150;
+    t  = creation_transaction(d_solde, montant, "Test maj solde", "Test_utilisateur");
+    ajout_transaction(f, t);
+    fermer(f);
+
+    ouvrir(&f, nom_c);
+    mise_a_jour_solde("Test_utilisateur", d_solde);
+    fermer(f);
+    Entete e;
+    ouvrir(&f, nom_c);
+    read_entete(f, &e);
+    fermer(f);
+    printf("test solde %f\n", e.solde);
+    if(e.solde != montant){
+        printf("Problème mise_a_jour_solde sur le solde.\n");
+        return 1;
+    }
+    date(&d_solde);
+    printf("test date: %i %i %i\n", e.date.jour, e.date.mois, e.date.annee);
+    if(date_comp(e.date, d_solde) != 0){
+        printf("Problème mise_a_jour_solde sur la date.\n");
+        return 1;
+    }
 
     return 0;
 }

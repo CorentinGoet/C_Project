@@ -73,13 +73,59 @@ int mise_a_jour_solde(char* nom, Date d){
     //principe:
     // parcourir les transactions du fichier et ajouter au solde les transactions
 
-    // ouvrir le fichier du compte
+    // récupérer le n° de compte
     int num_compte;
     num_compte = compte_de(nom);
     if (num_compte == -1){
         return 1; // Pas de compte à ce nom
     }
 
+    // récupérer le nom du fichier de compte
+    char filename[50];
+    if (nom_compte(num_compte, filename) != 0){
+        return 1; // Problème dans la fonction nom_compte
+    }
+
+    // ouvrir le fichier du compte
+    FILE *f_compte;
+    ouvrir(&f_compte, filename);
+
+    // lire l'en-tête
+    Entete entete;
+    if(read_entete(f_compte, &entete) != 0){
+        printf("En-tête de compte invalide pour %s, compte n°%i\n", nom, num_compte);
+        return 1;
+    }
+
+    
+
+    // lecture des transactions tant que la date est supérieure à la date 
+    Transaction t;
+    int res = read_transaction(f_compte, &t);
+    while(res == 0) {
+        
+        if(date_comp(entete.date, t.date) > 0) break; // si la transition est plus vieille que la dernière màj de l'en-tête, on s'arrête
+        
+        if(strcmp(nom, t.nom) == 0){    // Si le propriétaire du compte est le receveur de la transaction
+            entete.solde = entete.solde + t.montant;
+        }else{
+            entete.solde = entete.solde - t.montant;
+        }
+        //lecture de la transaction
+        res = read_transaction(f_compte, &t);
+    }
+
+    // Mettre à jour la date de l'en-tete
+    date(&(entete.date));
+
+    // Ecrire le nouvel en-tête
+    fseek(f_compte, 0, 0);
+    if(write_entete(f_compte, entete) != 0){
+        printf("Ecriture impossible de l'en-tête.\n");
+        return 1;
+    }
+
+    return 0;
 }
 
 // Vire le montant indiqué du compte 1 au compte 2 à la date d.

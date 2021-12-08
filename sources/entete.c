@@ -33,19 +33,29 @@ Entete creation_entete(Date date, float solde){
 FILE* creation_fichier(Entete entete, char* nom){
     
     FILE *f = fopen(nom, "w+");   // On place le fichier dans le dossier files/comptes, on l'ouvre avec w+ pour le créer
-    fprintf(f, "%i %i %i %f \n", entete.date.jour, entete.date.mois, entete.date.annee, entete.solde);
+    write_entete(f, entete);
     return f;
 }
 
-void read_entete(FILE *f, Date *d, float *solde){
+int read_entete(FILE *f, Entete *e){
     int jour, mois, annee;
     float s;
-    fscanf(f, "%i %i %i %f \n", &jour, &mois, &annee, &s);
-    d->jour = jour;
-    d->mois = mois;
-    d->annee = annee;
-    *solde = s;
+    if(fscanf(f, "%i %i %i %f \n", &jour, &mois, &annee, &s) != 4) return 1;
+    e->date.jour = jour;
+    e->date.mois = mois;
+    e->date.annee = annee;
+    e->solde = s;
+    return 0;
 }
+
+int write_entete(FILE *f, Entete e){
+    if(fprintf(f, "%i %i %i %f \n", e.date.jour, e.date.mois, e.date.annee, e.solde) != 4){
+        return 1;
+    }
+    return 0;
+}
+
+
 
 /*
 void mise_a_jour_solde(FILE *f, Date d){

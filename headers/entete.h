@@ -18,6 +18,6 @@ Entete creation_entete(Date date, float solde);
 FILE* creation_fichier(Entete entete, char* nom);
 //void mise_a_jour_solde(FILE *f, Date d);
 
-void read_entete(FILE *f, Date *d, float *solde);
-
+int read_entete(FILE *f, Entete *e);
+int write_entete(FILE *f, Entete e);
 #endif

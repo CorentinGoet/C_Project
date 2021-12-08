@@ -36,9 +36,8 @@ Transaction creation_transaction(Date date, float montant, char* label, char* no
 
 int ajout_transaction(FILE *f, Transaction transaction){
     // Placer le pointeur de fichier après l'en-tête
-    Date d;
-    float solde;
-    read_entete(f, &d, &solde);
+    Entete e;
+    read_entete(f, &e);
 
     // Ecriture du fichier
     fprintf(f, "%i %i %i ", transaction.date.jour, transaction.date.mois, transaction.date.annee); //date
@@ -56,9 +55,8 @@ int ajout_transaction(FILE *f, Transaction transaction){
 int read_transaction(FILE *f, Transaction *t){
     // Placer le pointeur de fichier après l'en-tête si besoin
     if(ftell(f) == 0){
-        Date d;
-        float s;
-        read_entete(f, &d, &s);
+        Entete e;
+        read_entete(f, &e);
     }
 
 
@@ -67,11 +65,17 @@ int read_transaction(FILE *f, Transaction *t){
     char *label = malloc(31 * sizeof(char));
     char *nom = malloc(50 * sizeof(char));
 
-    fscanf(f, "%i %i %i ", &jour, &mois, &annee); // lecture de la date
+    // lecture de la date
+    if(fscanf(f, "%i %i %i ", &jour, &mois, &annee) != 3) return 1; 
 
-    fscanf(f, "%f ", &montant); // récupérer montant
-    fscanf(f, "%i ", &taille);  // récupérer la taille du label
-    fgets(label, taille + 1, f);    // récupérer le label
+    // récupérer montant
+    if(fscanf(f, "%f ", &montant) != 1) return 1; 
+
+    // récupérer la taille du label
+    if(fscanf(f, "%i ", &taille) != 1) return 1;
+
+    // récupérer le label
+    fgets(label, taille + 1, f);    
     fscanf(f, "%i ", &taille);  // récupérer la taille du nom
     fgets(nom, taille + 1, f);  // récupérer le nom
 
