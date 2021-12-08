@@ -29,4 +29,7 @@ int imprimer_releve(char *nom, int mois);
 // Vérifie qu'un numéro de compte est disponible
 int check_num_compte(int num_compte);
 
+// Donne le nom d'un fichier de compte à partir du n° de compte
+int nom_compte(int num_compte, char *nom);
+
 #endif

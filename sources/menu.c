@@ -36,10 +36,9 @@ int creer_utilisateur(char *nom){
 
 
     // Création du fichier correspondant au compte
-    char str_num_compte[15];
-    char path[50] = "Files/comptes/";
-    sprintf(str_num_compte, "%i ", num_compte); // convertir le num de compte en chaine de caractères
-    strcat(path, str_num_compte);
+    
+    char path[50];
+    nom_compte(num_compte, path);
     FILE *f = creation_fichier(entete, path);
     fermer(f);
 
@@ -70,7 +69,18 @@ int compte_de(char *nom){
 }
 
 // Met à jour le compte associé à ce nom pour la date correspondante.
-int mise_a_jour_solde(char* nom, Date d);
+int mise_a_jour_solde(char* nom, Date d){
+    //principe:
+    // parcourir les transactions du fichier et ajouter au solde les transactions
+
+    // ouvrir le fichier du compte
+    int num_compte;
+    num_compte = compte_de(nom);
+    if (num_compte == -1){
+        return 1; // Pas de compte à ce nom
+    }
+
+}
 
 // Vire le montant indiqué du compte 1 au compte 2 à la date d.
 int virement_de_compte_a_compte(int num_compte1, int num_compte2, Date d, float montant);
@@ -83,11 +93,8 @@ int imprimer_releve(char *nom, int mois);
 
 // Vérifie qu'un numéro de compte est disponible
 int check_num_compte(int num_compte){
-    char filename [35]= "Files/comptes/";
-    char str_num_compte[15];
-    sprintf(str_num_compte, "%i", num_compte); // convertir le num de compte en chaine de caractères
-    strcat(filename, str_num_compte);   // concaténer le path
-
+    char filename [35];
+    nom_compte(num_compte, filename);
     FILE *file;
     if((file = fopen(filename,"r"))!=NULL)
         {
@@ -100,4 +107,15 @@ int check_num_compte(int num_compte){
             return 1;
         }
     
+}
+
+// Donne le path/nom d'un fichier à partir du numéro de compte
+int nom_compte(int num_compte, char* nom){
+    char filename [35]= "Files/comptes/";
+    char str_num_compte[15];
+    sprintf(str_num_compte, "%i", num_compte); // convertir le num de compte en chaine de caractères
+    strcat(filename, str_num_compte);   // concaténer le path
+
+    strcpy(nom, filename);
+    return 0;
 }

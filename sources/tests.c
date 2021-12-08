@@ -239,6 +239,17 @@ int testMenu(int details){
     }
     if (details) printf("Fonction compte_de ok !\n");
 
+    // test nom_compte
+    int num_compte = 150;
+    char nom_c[50];
+    nom_compte(num_compte, nom_c);
+    printf("test : %s\n", nom_c);
+    if (strcmp(nom_c, "Files/comptes/150") != 0){
+        printf("Problème fonction nom_compte.\n");
+        return 1;
+    }
+    if(details) printf("Fonction nom_compte ok !\n");
+
     return 0;
 }
 
