@@ -113,8 +113,6 @@ int testTransaction(int details){
     read_transaction(f2, &t3);
     fermer(f2);
 
-    
-
     if (date_comp(t2.date, t3.date) != 0 || t2.montant != t3.montant || strcmp(t3.label, t2.label) != 0 || strcmp(t3.nom, t2.nom) != 0){
         printf("Probleme ajout_transaction ou read_transaction.\n");
         return 1;
@@ -182,7 +180,25 @@ int testEntete(int details){
 
     if(details)printf("Fonction creation_fichier ok !\n");
 
-    
+    // Test read_entete
+    FILE *f2;
+    ouvrir(&f2, "Tests/test_creation_fichier");
+    Date d2;
+    float solde;
+    read_entete(f2, &d2, &solde);
+    fermer(f2);
+
+
+    if(e1.date.jour != d2.jour || e1.date.mois != d2.mois || e1.date.annee != d2.annee){
+        printf("Problème fonction read_entete sur la lecture de date.\n");
+        return 1;
+    }
+    if(e1.solde != solde){
+        printf("Problème fonction read_entete sur la lecture du solde.\n");
+        return 1;
+    }
+
+    if(details) printf("Fonction read_entete ok !\n");
     return 0;
 }
 
@@ -221,7 +237,7 @@ int testMenu(int details){
         printf("Problème fonction compte_de\n");
         return 1;
     }
-    if (details) printf("Fonction compte_de ok !");
+    if (details) printf("Fonction compte_de ok !\n");
 
     return 0;
 }
@@ -292,6 +308,9 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
-    
+    printf("-----------------------------------------\n");
+    printf("Tous les tests sont passés sans problèmes !\n");
+    printf("=========================================\n");
+
     return 0;
 }

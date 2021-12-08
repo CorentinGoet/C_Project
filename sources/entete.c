@@ -37,6 +37,16 @@ FILE* creation_fichier(Entete entete, char* nom){
     return f;
 }
 
+void read_entete(FILE *f, Date *d, float *solde){
+    int jour, mois, annee;
+    float s;
+    fscanf(f, "%i %i %i %f \n", &jour, &mois, &annee, &s);
+    d->jour = jour;
+    d->mois = mois;
+    d->annee = annee;
+    *solde = s;
+}
+
 /*
 void mise_a_jour_solde(FILE *f, Date d){
 

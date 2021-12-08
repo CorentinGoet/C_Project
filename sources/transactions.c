@@ -6,9 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "../headers/date.h"
-#include "../headers/transactions.h"
+#include "../headers/entete.h"
 #include "../headers/files_utils.h"
+
+#include "../headers/transactions.h"
 
 /* Rappel structure Transaction:
 *  =============================
@@ -32,7 +35,11 @@ Transaction creation_transaction(Date date, float montant, char* label, char* no
 }
 
 int ajout_transaction(FILE *f, Transaction transaction){
-    
+    // Placer le pointeur de fichier après l'en-tête
+    Date d;
+    float solde;
+    read_entete(f, &d, &solde);
+
     // Ecriture du fichier
     fprintf(f, "%i %i %i ", transaction.date.jour, transaction.date.mois, transaction.date.annee); //date
     fprintf(f, "%f ", transaction.montant);  // montant
@@ -47,6 +54,14 @@ int ajout_transaction(FILE *f, Transaction transaction){
 * Cette fonction lit une transaction depuis le fichier fourni.
 */
 int read_transaction(FILE *f, Transaction *t){
+    // Placer le pointeur de fichier après l'en-tête si besoin
+    if(ftell(f) == 0){
+        Date d;
+        float s;
+        read_entete(f, &d, &s);
+    }
+
+
     int jour, mois, annee, taille;
     float montant;
     char *label = malloc(31 * sizeof(char));
