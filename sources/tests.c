@@ -297,8 +297,19 @@ int testMenu(int details){
     // Test virement de compte à compte
     Date d_virement;
     date(&d_virement);
-    virement_de_compte_a_compte(1234, 12345, d_virement, 50);
+    if(virement_de_compte_a_compte(1234, 12345, d_virement, 50) != 0){
+        printf("problème fonction virement de compte à compte.\n");
+        return 1;
+    }
+    if(details)printf("Fonction virement_de_compte_a_compte ok !\n");
 
+    // Test virement de a
+    if(virement_de_a("test_maj", "test_vir", d_virement, montant) != 0){
+        printf("Problème fonction virement_de_a.\n");
+        return 1;
+    }
+    if(details) printf("Fonction virement_de_a ok !\n");
+    
     return 0;
 }
 

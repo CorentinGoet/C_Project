@@ -165,9 +165,14 @@ int virement_de_compte_a_compte(int num_compte1, int num_compte2, Date d, float 
 
 // Vire le montant indiqué du compte asssocié au nom 1, vers le compte associé au nom 2 à la date d.
 int virement_de_a(char *nom1, char *nom2, Date d, float montant){
-    // Création de la transaction
     // recup num de comptes de 1 et 2
     // appeler vir compte a compte
+
+    int num_compte1, num_compte2;
+    num_compte1 = compte_de(nom1);
+    num_compte2 = compte_de(nom2);
+    
+    return virement_de_compte_a_compte(num_compte1, num_compte2, d, montant);
 }
 
 // Affiche le relevé du compte associé au nom pour le mois fourni.
