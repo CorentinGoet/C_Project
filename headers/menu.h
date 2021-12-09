@@ -35,4 +35,6 @@ int nom_compte(int num_compte, char *nom);
 // Donne le nom du propriétaire du compte a partir du num
 int num2nom(int num_compte, char *nom);
 
+// Interface de menu
+void menu();
 #endif
