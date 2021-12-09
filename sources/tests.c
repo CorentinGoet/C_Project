@@ -309,7 +309,13 @@ int testMenu(int details){
         return 1;
     }
     if(details) printf("Fonction virement_de_a ok !\n");
-    
+
+    // Test de imprimer_releve
+    // Ce test n'est effectué que si les détails sont demandés puisqu'il est uniquement visuel
+    if (details){
+        imprimer_releve("test_maj", 12);
+    }
+
     return 0;
 }
 

@@ -179,6 +179,47 @@ int virement_de_a(char *nom1, char *nom2, Date d, float montant){
 int imprimer_releve(char *nom, int mois){
     // Parcourir les transactions
     // on garde celles du mois donné et l'entete
+    int num_compte, res;
+    char filename[50];
+    Entete entete;
+    Transaction t;
+        printf("ok appel \n");
+    // trouver le numéro du compte
+    num_compte = compte_de(nom);
+        printf("ok compte_de\n");
+    // trouver le nom du fichier du compte
+    nom_compte(num_compte, filename);
+        printf("ok initialisation\n");
+    // Affichage du titre etc...
+    printf("====================\n");
+    printf("Relevé de compte : \n");
+    printf("Nom : %s N° de compte: %i\n", nom, num_compte);
+
+
+    FILE *f;
+    ouvrir(&f, filename);
+        printf("ok ouverture fichier\n");
+    read_entete(f, &entete);
+        printf("ok read_entete\n");
+    // Affichage de l'en-tête
+    printf("En-tête : \n");
+    printf("Date: %i / %i / %i Solde : %f \n", entete.date.jour, entete.date.mois, entete.date.annee, entete.solde);
+    printf(" - - - - - - - - - - - - - - -\n");
+    printf("Transactions: \n");
+        printf("ok affichage entete\n");
+    do{
+        res = read_transaction(f, &t);
+        if(t.date.mois == mois){
+            // Affichage de la transaction
+            printf("Date : %i / %i / %i, Montant: %f, Bénéficiaire : %s, Label : %s \n",
+            t.date.jour, t.date.mois, t.date.annee, t.montant, t.nom, t.label);
+        }
+
+    }while(res == 0);
+    fermer(f);
+    printf("====================\n");
+
+    return 0;
 }
 
 // Vérifie qu'un numéro de compte est disponible

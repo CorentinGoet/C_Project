@@ -16,7 +16,8 @@
 
 int main(int argc, char const *argv[])
 {
-
+    char nom[] = "test_maj";
+    imprimer_releve(nom, 12);
     return 0;
 }
 
