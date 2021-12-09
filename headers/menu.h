@@ -32,4 +32,7 @@ int check_num_compte(int num_compte);
 // Donne le nom d'un fichier de compte à partir du n° de compte
 int nom_compte(int num_compte, char *nom);
 
+// Donne le nom du propriétaire du compte a partir du num
+int num2nom(int num_compte, char *nom);
+
 #endif

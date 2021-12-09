@@ -49,7 +49,9 @@ int read_entete(FILE *f, Entete *e){
 }
 
 int write_entete(FILE *f, Entete e){
-    if(fprintf(f, "%i %i %i %f \n", e.date.jour, e.date.mois, e.date.annee, e.solde) != 4){
+    
+    if(fprintf(f, "%i %i %i %f \n", e.date.jour, e.date.mois, e.date.annee, e.solde) < 0){
+        
         return 1;
     }
     return 0;

@@ -252,34 +252,52 @@ int testMenu(int details){
     Date d_solde;
     date(&d_solde);
     d_solde.jour = d_solde.jour +1; // la transaction doit se passer après la date de l'entete
-    num_compte = compte_de("Test_utilisateur");
+    num_compte = compte_de("test_maj");
     nom_compte(num_compte, nom_c);
     FILE *f;
     ouvrir(&f, nom_c);
     Transaction t;
     int montant = 150;
-    t  = creation_transaction(d_solde, montant, "Test maj solde", "Test_utilisateur");
+    t  = creation_transaction(d_solde, montant, "Test maj solde", "test_maj");
     ajout_transaction(f, t);
     fermer(f);
-
     ouvrir(&f, nom_c);
-    mise_a_jour_solde("Test_utilisateur", d_solde);
+    mise_a_jour_solde("test_maj", d_solde);
     fermer(f);
     Entete e;
-    ouvrir(&f, nom_c);
-    read_entete(f, &e);
-    fermer(f);
-    printf("test solde %f\n", e.solde);
+    FILE *f2;
+    ouvrir(&f2, nom_c);
+    read_entete(f2, &e);
+    fermer(f2);
     if(e.solde != montant){
         printf("Problème mise_a_jour_solde sur le solde.\n");
         return 1;
     }
     date(&d_solde);
-    printf("test date: %i %i %i\n", e.date.jour, e.date.mois, e.date.annee);
+
     if(date_comp(e.date, d_solde) != 0){
         printf("Problème mise_a_jour_solde sur la date.\n");
         return 1;
     }
+    if(details)printf("Fonction mise_a_jour_solde ok !\n");
+
+    // Test num2nom
+    char nom[30];
+    if(num2nom(1234, nom) != 0){
+        printf("Problème fonction num2nom.\n");
+        return 1;
+    }
+    if(strcmp(nom, "test_maj") != 0){
+        printf("Problème fonction num2nom\n");
+        printf("%s", nom);
+        return 1;
+    }
+    if(details) printf("Fonction num2nom ok !\n");
+
+    // Test virement de compte à compte
+    Date d_virement;
+    date(&d_virement);
+    virement_de_compte_a_compte(1234, 12345, d_virement, 50);
 
     return 0;
 }

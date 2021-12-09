@@ -104,12 +104,13 @@ int mise_a_jour_solde(char* nom, Date d){
     int res = read_transaction(f_compte, &t);
     while(res == 0) {
         
-        if(date_comp(entete.date, t.date) > 0) break; // si la transition est plus vieille que la dernière màj de l'en-tête, on s'arrête
+        if(date_comp(entete.date, t.date) <= 0){ // si la transition est plus vieille que la dernière màj de l'en-tête, on ne la considère pas
         
-        if(strcmp(nom, t.nom) == 0){    // Si le propriétaire du compte est le receveur de la transaction
-            entete.solde = entete.solde + t.montant;
-        }else{
-            entete.solde = entete.solde - t.montant;
+            if(strcmp(nom, t.nom) == 0){    // Si le propriétaire du compte est le receveur de la transaction
+                entete.solde = entete.solde + t.montant;
+            }else{
+                entete.solde = entete.solde - t.montant;
+            }
         }
         //lecture de la transaction
         res = read_transaction(f_compte, &t);
@@ -117,9 +118,10 @@ int mise_a_jour_solde(char* nom, Date d){
 
     // Mettre à jour la date de l'en-tete
     date(&(entete.date));
-
+    printf("date maj entete %i %i %i\n", entete.date.jour, entete.date.mois, entete.date.annee);
     // Ecrire le nouvel en-tête
     fseek(f_compte, 0, 0);
+    printf("Nouveau solde : %f\n", entete.solde);
     if(write_entete(f_compte, entete) != 0){
         printf("Ecriture impossible de l'en-tête.\n");
         return 1;
@@ -129,13 +131,50 @@ int mise_a_jour_solde(char* nom, Date d){
 }
 
 // Vire le montant indiqué du compte 1 au compte 2 à la date d.
-int virement_de_compte_a_compte(int num_compte1, int num_compte2, Date d, float montant);
+int virement_de_compte_a_compte(int num_compte1, int num_compte2, Date d, float montant){
+    
+    char nom_receveur[50], nom_emetteur[50], label_rec[31], label_em[31], filename[30]; // Nom du receveur et de l'emetteur + labels
+    Transaction transaction_rec, transaction_em;   // transactions du receveur et de l'emetteur
+
+    // Initialisation des noms et des labels
+    num2nom(num_compte2, nom_receveur);
+    num2nom(num_compte1, nom_emetteur);
+
+    sprintf(label_em, "virement a %i", num_compte2);
+    sprintf(label_rec, "virement de %i", num_compte1);
+
+    // création des transactions
+    transaction_em = creation_transaction(d, montant, label_em, nom_receveur);
+    transaction_rec = creation_transaction(d, montant, label_rec, nom_receveur);
+
+    // Ecriture dans le compte de l'emetteur
+    FILE *f;
+    nom_compte(num_compte1, filename); 
+    ouvrir(&f, filename);
+    ajout_transaction(f, transaction_em);
+    fermer(f);
+
+    // Ecriture sur le compte du receveur
+    nom_compte(num_compte2, filename);
+    ouvrir(&f, filename);
+    ajout_transaction(f, transaction_rec);
+    fermer(f);
+
+    return 0;
+}
 
 // Vire le montant indiqué du compte asssocié au nom 1, vers le compte associé au nom 2 à la date d.
-int virement_de_a(char *nom1, char *nom2, Date d, float montant);
+int virement_de_a(char *nom1, char *nom2, Date d, float montant){
+    // Création de la transaction
+    // recup num de comptes de 1 et 2
+    // appeler vir compte a compte
+}
 
 // Affiche le relevé du compte associé au nom pour le mois fourni.
-int imprimer_releve(char *nom, int mois);
+int imprimer_releve(char *nom, int mois){
+    // Parcourir les transactions
+    // on garde celles du mois donné et l'entete
+}
 
 // Vérifie qu'un numéro de compte est disponible
 int check_num_compte(int num_compte){
@@ -164,4 +203,22 @@ int nom_compte(int num_compte, char* nom){
 
     strcpy(nom, filename);
     return 0;
+}
+
+// Donne le nom du propriétaire a partir du num de compte (inv. de compte_de)
+int num2nom(int num_compte, char nom[50]){
+    FILE *f;
+    ouvrir(&f, "Files/registre");
+    int taille, num, res;
+    char nom_compte[50];
+    do{
+        res = fscanf(f, "%i %i ", &num, &taille); // Récupérer le num de compte et le nb de char du nom
+        fgets(nom_compte, taille + 2, f);   // Récupérer le nom
+        nom_compte[taille+0] = '\0'; // On retire le \n et l'espace à la fin du nom
+        if (num == num_compte){
+            strcpy(nom, nom_compte);
+            return 0;
+        }
+    }while(res > 0);
+    return -1; // pas de compte trouvé
 }

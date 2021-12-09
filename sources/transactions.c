@@ -35,10 +35,9 @@ Transaction creation_transaction(Date date, float montant, char* label, char* no
 }
 
 int ajout_transaction(FILE *f, Transaction transaction){
-    // Placer le pointeur de fichier après l'en-tête
-    Entete e;
-    read_entete(f, &e);
-
+    // On se place a la fin du fichier
+    fseek(f, 0, SEEK_END);
+    
     // Ecriture du fichier
     fprintf(f, "%i %i %i ", transaction.date.jour, transaction.date.mois, transaction.date.annee); //date
     fprintf(f, "%f ", transaction.montant);  // montant
