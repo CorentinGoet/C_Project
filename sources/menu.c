@@ -268,3 +268,64 @@ int num2nom(int num_compte, char nom[50]){
     }while(res > 0);
     return -1; // pas de compte trouvé
 }
+
+// Interface de menu de la banque
+void menu(){
+
+    char choix;
+
+    printf("============================================\n");
+    printf("Bienvenue dans la banque !\n");
+
+    do{
+        
+        printf("------------------------\n");
+        printf("Que voulez-vous faire ?\n\n");
+        printf("\tAjouter un nouveau client........................A\n");
+        printf("\tLister les comptes de tous les clients...........L\n");
+        printf("\tRelevé d'un compte client........................R\n");
+        printf("\tVirement depuis un compte client.................V\n");
+        printf("\tMise à jour du solde d'un client.................M\n");
+        printf("\tQuitter..........................................Q\n");
+
+        printf("Votre choix : \n");
+        //rewind(stdin);
+        scanf("%c", &choix);
+
+        switch(choix){
+            case 'A':
+            case 'a':
+                printf("Non.\n");
+                break;
+            
+            case 'L':
+            case 'l':
+                printf("Non.\n");
+                break;
+            
+            case 'R':
+            case 'r':
+                printf("Non.\n");
+                break;
+
+            case 'V':
+            case 'v':
+                printf("Non.\n");
+                break;
+            
+            case 'M':
+            case 'm':
+                printf("Non.\n");
+                break;
+            
+            case 'Q':
+            case 'q':
+                printf("Au revoir.\n");
+                break;
+
+            default:
+                printf("Veuillez choisir parmi les options proposées.\n");
+        }
+
+    }while(choix != 'q' && choix != 'Q');
+}
