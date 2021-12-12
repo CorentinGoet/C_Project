@@ -35,4 +35,6 @@ int date_comp(Date d1, Date d2){
     if(nb_jour1 > nb_jour2) return 1;
     if(nb_jour1 == nb_jour2) return 0;
     if(nb_jour1 < nb_jour2) return -1;
+
+    return -2;
 }

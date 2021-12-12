@@ -39,12 +39,14 @@ int ajout_transaction(FILE *f, Transaction transaction){
     fseek(f, 0, SEEK_END);
     
     // Ecriture du fichier
-    fprintf(f, "%i %i %i ", transaction.date.jour, transaction.date.mois, transaction.date.annee); //date
-    fprintf(f, "%f ", transaction.montant);  // montant
-    fprintf(f, "%li ", strlen(transaction.label)); // taille du label
-    fprintf(f, "%s ", transaction.label);    // label
-    fprintf(f, "%li ", strlen(transaction.nom)); // taille du nom
-    fprintf(f, "%s \n", transaction.nom);    // nom
+    if(fprintf(f, "%i %i %i ", transaction.date.jour, transaction.date.mois, transaction.date.annee) < 0) return -1; //date
+    if(fprintf(f, "%f ", transaction.montant) < 0) return -1;  // montant 
+    if(fprintf(f, "%li ", strlen(transaction.label)) < 0 ) return -1; // taille du label
+    if(fprintf(f, "%s ", transaction.label) < 0) return -1;    // label
+    if(fprintf(f, "%li ", strlen(transaction.nom)) < 0) return -1; // taille du nom
+    if(fprintf(f, "%s \n", transaction.nom) < 0) return -1;    // nom
+
+    return 0;
 }
 
 

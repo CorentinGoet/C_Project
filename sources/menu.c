@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <time.h>
 
 #include "../headers/date.h"
 #include "../headers/compte.h"
@@ -179,7 +180,7 @@ int virement_de_a(char *nom1, char *nom2, Date d, float montant){
 int imprimer_releve(char *nom, int mois){
     // Parcourir les transactions
     // on garde celles du mois donné et l'entete
-    int num_compte, res;
+    int num_compte, res = 0;
     char filename[50];
     Entete entete;
     Transaction t;
@@ -201,15 +202,15 @@ int imprimer_releve(char *nom, int mois){
     printf("Date: %i / %i / %i Solde : %f \n", entete.date.jour, entete.date.mois, entete.date.annee, entete.solde);
     printf(" - - - - - - - - - - - - - - -\n");
     printf("Transactions: \n");
-    do{
+    while(res == 0){
         res = read_transaction(f, &t);
-        if(t.date.mois == mois){
+        if(t.date.mois == mois && res == 0){
             // Affichage de la transaction
             printf("Date : %i / %i / %i, Montant: %f, Bénéficiaire : %s, Label : %s \n",
             t.date.jour, t.date.mois, t.date.annee, t.montant, t.nom, t.label);
         }
 
-    }while(res == 0);
+    }
     fermer(f);
     printf("====================\n");
 
