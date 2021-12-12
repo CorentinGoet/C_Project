@@ -35,6 +35,21 @@ int nom_compte(int num_compte, char *nom);
 // Donne le nom du propriétaire du compte a partir du num
 int num2nom(int num_compte, char *nom);
 
+// Vérifie si un nom se trouve dans le registre
+int nom_dans_registre(char *nom);
+
+// Vérifie si un numéro de compte se trouve dans le registre
+int numero_dans_registre(int num_compte);
+
 // Interface de menu
 void menu();
+
+// sous fonction de l'interface menu() responsable de l'ajout d'un nouveau client
+int menu_ajout_client();
+
+// sous fonction de l'interface menu() responsable de lister tous les clients de la banque
+int menu_liste_clients();
+
+// sous fonction de l'interface menu() responsable des relevés de comptes
+int menu_releve_client();
 #endif

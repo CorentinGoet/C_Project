@@ -183,13 +183,10 @@ int imprimer_releve(char *nom, int mois){
     char filename[50];
     Entete entete;
     Transaction t;
-        printf("ok appel \n");
     // trouver le numéro du compte
     num_compte = compte_de(nom);
-        printf("ok compte_de\n");
     // trouver le nom du fichier du compte
     nom_compte(num_compte, filename);
-        printf("ok initialisation\n");
     // Affichage du titre etc...
     printf("====================\n");
     printf("Relevé de compte : \n");
@@ -198,15 +195,12 @@ int imprimer_releve(char *nom, int mois){
 
     FILE *f;
     ouvrir(&f, filename);
-        printf("ok ouverture fichier\n");
     read_entete(f, &entete);
-        printf("ok read_entete\n");
     // Affichage de l'en-tête
     printf("En-tête : \n");
     printf("Date: %i / %i / %i Solde : %f \n", entete.date.jour, entete.date.mois, entete.date.annee, entete.solde);
     printf(" - - - - - - - - - - - - - - -\n");
     printf("Transactions: \n");
-        printf("ok affichage entete\n");
     do{
         res = read_transaction(f, &t);
         if(t.date.mois == mois){
@@ -222,7 +216,7 @@ int imprimer_releve(char *nom, int mois){
     return 0;
 }
 
-// Vérifie qu'un numéro de compte est disponible
+// Vérifie qu'un numéro de compte est disponible parmi les fichiers de comptes
 int check_num_compte(int num_compte){
     char filename [35];
     nom_compte(num_compte, filename);
@@ -269,16 +263,53 @@ int num2nom(int num_compte, char nom[50]){
     return -1; // pas de compte trouvé
 }
 
+// Vérifie l'existence d'un nom dans le registre (0 si non 1 si oui)
+int nom_dans_registre(char *nom){
+    FILE *f;
+    ouvrir(&f, "Files/registre");
+    int taille, num, res;
+    char nom_compte[50];
+
+    // On parcourt le registre (similaire à compte_de, nom_compte ...)
+    do{
+        res = fscanf(f, "%i %i ", &num, &taille); // Récupérer le num de compte et le nb de char du nom
+        fgets(nom_compte, taille + 2, f);   // Récupérer le nom
+        nom_compte[taille+0] = '\0'; // On retire le \n et l'espace à la fin du nom
+        if (strcmp(nom, nom_compte) == 0){
+            return 1; // compte trouvé
+        }
+    }while(res > 0);
+
+    return 0; // pas de compte trouvé à ce nom
+}
+
+// Vérifie l'existence d'un numéro de compte dans le registre
+int numero_dans_registre(int num_compte){
+    FILE *f;
+    ouvrir(&f, "Files/registre");
+    int taille, num, res;
+    char nom_compte[50];
+    do{
+        res = fscanf(f, "%i %i ", &num, &taille); // Récupérer le num de compte et le nb de char du nom
+        fgets(nom_compte, taille + 2, f);   // Récupérer le nom
+        nom_compte[taille+0] = '\0'; // On retire le \n et l'espace à la fin du nom
+        if (num == num_compte){
+            return 1; // compte trouvé a ce num
+        }
+    }while(res > 0);
+    return 0; // pas de compte trouvé pour ce num
+}
+
 // Interface de menu de la banque
 void menu(){
 
     char choix;
 
-    printf("============================================\n");
-    printf("Bienvenue dans la banque !\n");
+    
 
     do{
-        
+        printf("============================================\n");
+        printf("Bienvenue dans la banque !\n");
         printf("------------------------\n");
         printf("Que voulez-vous faire ?\n\n");
         printf("\tAjouter un nouveau client........................A\n");
@@ -289,23 +320,23 @@ void menu(){
         printf("\tQuitter..........................................Q\n");
 
         printf("Votre choix : \n");
-        //rewind(stdin);
-        scanf("%c", &choix);
+        rewind(stdin);
+        scanf("%s", &choix);
 
         switch(choix){
             case 'A':
             case 'a':
-                printf("Non.\n");
+                menu_ajout_client();
                 break;
             
             case 'L':
             case 'l':
-                printf("Non.\n");
+                menu_liste_clients();
                 break;
             
             case 'R':
             case 'r':
-                printf("Non.\n");
+                menu_releve_client();
                 break;
 
             case 'V':
@@ -328,4 +359,137 @@ void menu(){
         }
 
     }while(choix != 'q' && choix != 'Q');
+}
+
+int menu_ajout_client(){
+
+    int ok = 1;
+    int num_compte;
+    char nom[50];
+
+    printf("============================================\n");
+    printf("Ajout d'un nouveau client :\n");
+    
+    while(ok){
+        char choix;
+        printf("Entrez le nom du client:\n");
+        rewind(stdin);
+        scanf("%s", nom);
+        printf("Le nom sélectionné est : %s.\n", nom);
+
+        // Vérifier que le nom est disponible
+        if(nom_dans_registre(nom)){
+            printf("Ce nom existe déjà dans le registre.\n");
+            continue; // on repasse dans la boucle
+        }
+        
+        printf("Que voulez-vous faire ?\n");
+        printf("\tModifier le nom .... M\n");
+        printf("\tCréer le compte .... C\n");
+        printf("votre choix :\n");
+        
+        rewind(stdin);
+        scanf("%s", &choix);
+
+        switch(choix){
+            case 'm':
+            case 'M':
+                ok = 1;
+                break;
+            
+            case 'c':
+            case 'C':
+                ok = 0;
+                break;
+
+            default :
+                printf("Veuillez choisir une option parmi celles proposées.\n");
+                ok = 1;  
+        }
+    }
+    
+    creer_utilisateur(nom); // création du compte
+    num_compte = compte_de(nom);    // récupération du num de compte
+    printf("Un compte a bien été créé pour %s avec le n° de compte %i.\n", nom, num_compte);
+
+    return 0;
+}
+
+int menu_liste_clients(){
+    int num, taille, res;
+    char nom[50];
+    FILE *f;
+
+    printf("============================================\n");
+    printf("Liste des clients :\n");
+
+    ouvrir(&f, "Files/registre");
+
+    do{
+        res = fscanf(f, "%i %i ", &num, &taille); // Récupérer le num de compte et le nb de char du nom
+        fgets(nom, taille + 2, f);   // Récupérer le nom
+        nom[taille+0] = '\0'; // On retire le \n et l'espace à la fin du nom
+        
+        if(res > 0) printf("Compte n°%i, nom: %s\n", num, nom); // on évite d'imprimer en double la derniere ligne
+    }while(res > 0);
+    fermer(f);
+    return 0;
+}
+
+int menu_releve_client(){
+    
+    char nom[50], choix;
+    int res = 0, mois = 0;
+
+
+    printf("============================================\n");
+    printf("Vous souhaitez accéder au relevé de compte d'un client.\n");
+
+    while(res == 0){ // Tant que le nom entré ne correspond pas à un client
+        printf("Entrez le nom du client :\n");
+        scanf("%s", nom);
+        printf("Nom sélectionné : %s.\n", nom);
+
+        // Recherche du nom dans le registre
+        if((res = nom_dans_registre(nom))){
+            printf("Compte trouvé pour %s.\n", nom);
+        }else{
+            printf("Pas de compte pour le nom: %s.\n", nom);
+        }
+    }
+
+    printf("Que voulez-faire ?\n");
+    printf("Afficher le relevé de compte .........A\n");
+    printf("Retourner au menu principal ..........M\n");
+
+    scanf("%s", &choix);
+    switch(choix){
+        case 'a':
+        case 'A':
+            while(mois < 1 || mois > 12){
+                printf("Quel mois souhaitez-vous afficher ? (janvier - 1 => décembre - 12)\n");
+                rewind(stdin);
+                scanf("%i", &mois);
+                if (mois < 1 || mois > 12){
+                    printf("%i n'est pas un numéro de mois valide.\n", mois);
+                }else{
+                    printf("Vous avez sélectionné le mois %i.\n", mois);
+                }
+            }
+
+            imprimer_releve(nom, mois);
+            break;
+        
+        case 'm':
+        case 'M':
+            return 0;
+            break;
+        
+        default:
+            printf("Choisissez une option parmi celles proposées.\n");
+
+
+    }
+
+    return 0;
 }
