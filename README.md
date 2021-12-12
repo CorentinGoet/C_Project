@@ -1,13 +1,21 @@
 # Projet C
 
 Ce projet est réalisé dans le cadre du cours de Programmation Avancée Impérative de l'ENSTA Bretagne.
-Ce projet est réalisé en binôme, les auteurs de ce projet sont Corentin Goetghebeur et Chris Arridi.
+Ce projet est réalisé en binôme par Corentin Goetghebeur et Chris Arridi.
+
+# Table of contents
+1. [Objectif](#objectif)
+2. [Installation](#installation)
+3. [Utilisation](#utilisation)
+4. [Tests](#test)
+5. [Structure](#structure)
+6. [Modifications Apportées](#modifications)
 
 ## Objectif
 Ce projet a pour objectif la mise en place de structures et fonctions permettant la simulation d'un système bancaire.
 Pour plus de détails sur ce projet, consulter Projet_C_2020_2021.pdf.
 
-## Téléchargement / Installation
+## Installation
 Ce projet est disponible sur GitHub à l'adresse: https://github.com/CorentinGoet/C_Project.git. L'exécutable compilé **main** devrait déjà être utilisable dans l'état ou vous l'avez téléchargé.
 
 ### Compilation
@@ -57,7 +65,7 @@ Le dossier du projet est organisé de la manière suivante:
 * docs_readme: contient les images de README.md.
 
 
-## Modifications apportées
+## Modifications
 Plusieurs libertées ont été prises par rapport au sujet (détaillé dans le fichier Projet_C_2020_2021.pdf).
 
 ### Format d'écriture dans les fichiers
