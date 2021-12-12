@@ -13,14 +13,14 @@ Ce projet est disponible sur GitHub à l'adresse: https://github.com/CorentinGoe
 ### Compilation
 Si vous effectuez des modifications sur le projet, vous pouvez compiler le projet en utilisant le makefile.
 ```bash
-$ make
+make
 ```
 En exécutant cette commande, vous produirez deux exécutables, **main** et **test**.
 
 ### Utilisation
 Une fois le projet compilé, vous pouvez l'exécuter avec **main**.
 ```bash
-$ ./main
+./main
 ```
 
 Le deuxième exécutable généré par la compilation est un pseudo test unitaire permettant de vérifier que les fonctions se comportent comme prévu.
@@ -28,6 +28,9 @@ Le deuxième exécutable généré par la compilation est un pseudo test unitair
 <p align=center>ATTENTION !<p>
 
 L'exécution de ce test créée des fichiers de comptes et les ajoute au registre (voir paragraphe structure).
+```bash
+./test
+```
 
 ## Structure
 Le dossier du projet est organisé de la manière suivante:
