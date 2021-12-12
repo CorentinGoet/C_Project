@@ -52,4 +52,11 @@ int menu_liste_clients();
 
 // sous fonction de l'interface menu() responsable des relevés de comptes
 int menu_releve_client();
+
+// sous fonction de l'interface menu() responsable des virements
+int menu_virements();
+
+// sous fonction de l'interface menu() responsable de la mise a jour du solde.
+int menu_maj_solde();
+
 #endif

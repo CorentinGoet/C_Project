@@ -311,7 +311,7 @@ void menu(){
         printf("============================================\n");
         printf("Bienvenue dans la banque !\n");
         printf("------------------------\n");
-        printf("Que voulez-vous faire ?\n\n");
+        printf("Que voulez-vous faire ?\n");
         printf("\tAjouter un nouveau client........................A\n");
         printf("\tLister les comptes de tous les clients...........L\n");
         printf("\tRelevé d'un compte client........................R\n");
@@ -341,12 +341,12 @@ void menu(){
 
             case 'V':
             case 'v':
-                printf("Non.\n");
+                menu_virements();
                 break;
             
             case 'M':
             case 'm':
-                printf("Non.\n");
+                menu_maj_solde();
                 break;
             
             case 'Q':
@@ -487,8 +487,140 @@ int menu_releve_client(){
         
         default:
             printf("Choisissez une option parmi celles proposées.\n");
+    }
 
+    return 0;
+}
 
+int menu_virements(){
+    Date d;
+    char choix, nom1[50], nom2[50];
+    int res = 0, montant;
+
+    printf("============================================\n");
+    printf("Vous avez choisi de faire un virement.\n");
+
+    // Entrer le nom du compte à débiter
+    while(res == 0){ // Tant que le nom entré ne correspond pas à un client
+        printf("Entrez le nom du client à débiter:\n");
+        scanf("%s", nom1);
+        printf("Nom sélectionné : %s.\n", nom1);
+
+        // Recherche du nom dans le registre
+        if((res = nom_dans_registre(nom1))){
+            printf("Compte trouvé pour %s.\n", nom1);
+        }else{
+            printf("Pas de compte pour le nom: %s.\n", nom1);
+        }
+    }
+    res = 0;
+    // Entrer le nom du compte à créditer
+    while(res == 0){ // Tant que le nom entré ne correspond pas à un client
+        printf("Vous avez choisi de faire un virement depuis le compte de %s.\n", nom1);
+        printf("Entrez le nom du client à créditer:\n");
+        scanf("%s", nom2);
+        printf("Nom sélectionné : %s.\n", nom2);
+
+        // Recherche du nom dans le registre
+        if((res = nom_dans_registre(nom2))){
+            printf("Compte trouvé pour %s.\n", nom2);
+        }else{
+            printf("Pas de compte pour le nom: %s.\n", nom2);
+        }
+    }
+    res = 0;
+
+    // Entrer le montant
+    while(res == 0){
+        printf("Vous avez choisi de faire un virement depuis %s vers %s.\n", nom1, nom2);
+        printf("Entrez un montant:\n");
+        rewind(stdin);
+        res = scanf("%i", &montant);
+        if(res != 1){
+            printf("Entrez un montant valide.\n");
+            res = 0;
+            continue;
+        }
+        
+
+    }
+    res = 0;
+
+    // Validation
+    while(res == 0){
+        int montant_transaction = montant; // Pour une raison inconnue, la variable montant change de valeur après le scanf qui ne la concerne pas
+        printf("Vous avez choisi de faire un virement de %i € depuis le compte de %s vers le compte de %s.\n", montant, nom1, nom2);
+        printf("\tValider ..... V\n");
+        printf("\tAnnuler ..... A\n");
+        scanf("%s", &choix);
+        switch(choix){
+            case 'v':
+            case 'V':
+                // Récupération de la date
+                date(&d);
+                // Virement
+                virement_de_a(nom1, nom2, d, montant_transaction);
+                printf("Le virement de %i € depuis le compte de %s vers le compte de %s a bien été effectué.\n", montant_transaction, nom1, nom2);
+                res = 1;
+                break;
+
+            case 'a':
+            case 'A':
+                return 0;
+
+            default:
+                printf("Veuillez choisir parmi les options proposées.\n");
+        }
+    }
+
+    return 0;
+}
+
+int menu_maj_solde(){
+
+    int res = 0;
+    char nom[50], choix;
+    Date d;
+
+    printf("============================================\n");
+    printf("Vous avez choisi de mettre à jour un solde.\n");
+    while(res == 0){ // Tant que le nom entré ne correspond pas à un client
+        printf("Entrez le nom du client:\n");
+        scanf("%s", nom);
+        printf("Nom sélectionné : %s.\n", nom);
+
+        // Recherche du nom dans le registre
+        if((res = nom_dans_registre(nom))){
+            printf("Compte trouvé pour %s.\n", nom);
+        }else{
+            printf("Pas de compte pour le nom: %s.\n", nom);
+        }
+    }
+    res = 0;
+    // Validation
+    while(res == 0){
+        printf("Vous avez choisi de mettre à jour le solde de %s.\n", nom);
+        printf("\tValider ..... V\n");
+        printf("\tAnnuler ..... A\n");
+        scanf("%s", &choix);
+        switch(choix){
+            case 'v':
+            case 'V':
+                // Récupération de la date
+                date(&d);
+                // mise a jour
+                mise_a_jour_solde(nom, d);
+                printf("La mise à jour du solde de %s a bien été effectuée.\n", nom);
+                res = 1;
+                break;
+
+            case 'a':
+            case 'A':
+                return 0;
+
+            default:
+                printf("Veuillez choisir parmi les options proposées.\n");
+        }
     }
 
     return 0;
