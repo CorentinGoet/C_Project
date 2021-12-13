@@ -71,11 +71,12 @@ int compte_de(char *nom){
 
 // Met à jour le compte associé à ce nom pour la date correspondante.
 int mise_a_jour_solde(char* nom, Date d){
-    //principe:
-    // parcourir les transactions du fichier et ajouter au solde les transactions
+    float solde = 0;
 
     // récupérer le n° de compte
     int num_compte;
+    
+
     num_compte = compte_de(nom);
     if (num_compte == -1){
         return 1; // Pas de compte à ce nom
@@ -105,29 +106,34 @@ int mise_a_jour_solde(char* nom, Date d){
     int res = read_transaction(f_compte, &t);
     while(res == 0) {
         
-        if(date_comp(entete.date, t.date) <= 0){ // si la transition est plus vieille que la dernière màj de l'en-tête, on ne la considère pas
+        if(date_comp(d, t.date) <= 0){ // transaction antérieure à la date voulue
         
             if(strcmp(nom, t.nom) == 0){    // Si le propriétaire du compte est le receveur de la transaction
-                entete.solde = entete.solde + t.montant;
+                solde = solde + t.montant;
             }else{
-                entete.solde = entete.solde - t.montant;
+                solde = solde - t.montant;
             }
+        }else{
+
         }
         //lecture de la transaction
         res = read_transaction(f_compte, &t);
     }
-
+    // Mise a jour du solde
+    entete.solde = solde;
     // Mettre à jour la date de l'en-tete
-    date(&(entete.date));
-    printf("date maj entete %i %i %i\n", entete.date.jour, entete.date.mois, entete.date.annee);
+    entete.date = d;
+
+    printf("Nouvel en-tête: %i / %i / %i solde : %f\n", entete.date.jour, entete.date.mois, entete.date.annee, entete.solde);
+
+
     // Ecrire le nouvel en-tête
     fseek(f_compte, 0, 0);
-    printf("Nouveau solde : %f\n", entete.solde);
     if(write_entete(f_compte, entete) != 0){
         printf("Ecriture impossible de l'en-tête.\n");
         return 1;
     }
-
+    fermer(f_compte);
     return 0;
 }
 

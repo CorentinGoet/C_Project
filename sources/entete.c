@@ -40,7 +40,7 @@ FILE* creation_fichier(Entete entete, char* nom){
 int read_entete(FILE *f, Entete *e){
     int jour, mois, annee;
     float s;
-    if(fscanf(f, "%i %i %i %f \n", &jour, &mois, &annee, &s) != 4) return 1;
+    if(fscanf(f, "%i %i %i %f\n", &jour, &mois, &annee, &s) != 4) return 1;
     e->date.jour = jour;
     e->date.mois = mois;
     e->date.annee = annee;
@@ -50,8 +50,8 @@ int read_entete(FILE *f, Entete *e){
 
 int write_entete(FILE *f, Entete e){
     
-    if(fprintf(f, "%i %i %i %f \n", e.date.jour, e.date.mois, e.date.annee, e.solde) < 0){
-        
+    if(fprintf(f, "%i %i %i %f\n", e.date.jour, e.date.mois, e.date.annee, e.solde) < 0){
+        printf("Erreur write_entete\n");
         return 1;
     }
     return 0;
@@ -59,7 +59,7 @@ int write_entete(FILE *f, Entete e){
 
 
 
-/*
+/* REMPLACE PAR mise_a_jour_solde DANS MENU
 void mise_a_jour_solde(FILE *f, Date d){
 
     // Récupération des données depuis le fichier des transactions

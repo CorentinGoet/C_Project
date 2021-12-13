@@ -77,5 +77,9 @@ Sur la première ligne, on peut voir l'écriture d'un en-tête de compte (module
 
 Sur les autres lignes, on peut voir l'écriture d'une transaction, soit une date, un montant et un label précédé de sa taille.
 
+### Mise à jour du solde
+
+Afin d'éviter les problèmes de transactions comptées plusieurs fois, la mise à jour du solde se fait en recomptant toutes les transactions antérieures à la date fournie. Cette solution suppose que le solde du compte avant toute transaction est nul (tels qu'ils sont créés par l'interface).
+
 
 
